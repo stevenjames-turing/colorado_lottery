@@ -213,7 +213,7 @@ RSpec.describe ColoradoLottery do
     expect(frederick.spending_money).to eq(15)
   end
 
-  xit 'next test' do
+  it 'current contestants can display multiple games and contestants that have ben charged' do
     alexander.add_game_interest('Pick 4')
     alexander.add_game_interest('Mega Millions')
     frederick.add_game_interest('Mega Millions')
@@ -234,12 +234,15 @@ RSpec.describe ColoradoLottery do
 
     lottery.charge_contestants(cash_5)
     lottery.charge_contestants(mega_millions)
+    lottery.charge_contestants(pick_4)
 
     expected_contestants = {
       cash_5 => ["Winston Churchill", "Grace Hopper"],
-      mega_millions => ["Alexander Aigades", "Frederick Douglas", "Grace Hopper"]}
+      mega_millions => ["Alexander Aigades", "Frederick Douglas", "Grace Hopper"],
+      pick_4 => ["Alexander Aigades", "Grace Hopper"]}
 
     expect(lottery.current_contestants).to eq(expected_contestants)
+    expect(grace.spending_money).to eq(12)
+    expect(alexander.spending_money).to eq(3)
   end
-
 end
