@@ -1,3 +1,5 @@
+require 'Date'
+
 class ColoradoLottery
   attr_reader :registered_contestants, :winners, :current_contestants
 
@@ -36,4 +38,12 @@ class ColoradoLottery
       @current_contestants.has_key?(game) ? @current_contestants[game] << contestant.full_name : @current_contestants[game] = [] << contestant.full_name
     end
   end
+
+  def draw_winners
+    @current_contestants.each_pair do |key, value|
+      @winners << {key.name => value.sample(1)[0]}
+    end
+    p Date.today.to_s
+  end
+
 end
