@@ -1,6 +1,6 @@
 class Contestant
-  attr_reader :full_name, :age, :state_of_residence, :spending_money,
-              :game_interests
+  attr_reader :full_name, :age, :state_of_residence, :game_interests
+  attr_accessor :spending_money
 
   def initialize(data)
     @full_name = "#{data[:first_name]} #{data[:last_name]}"
@@ -15,7 +15,7 @@ class Contestant
   end
 
   def add_game_interest(game)
-    @game_interests << game 
+    @game_interests << game
   end
 
 end

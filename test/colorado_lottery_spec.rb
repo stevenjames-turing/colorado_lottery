@@ -118,7 +118,7 @@ RSpec.describe ColoradoLottery do
     expect(lottery.registered_contestants).to eq(expected_registered)
   end
 
-  it 'knows contestants are eligible once registered and spending_money > game cost' do
+  it 'knows contestants are eligible once registered and spending_money >= game cost' do
     alexander.add_game_interest('Pick 4')
     alexander.add_game_interest('Mega Millions')
     frederick.add_game_interest('Mega Millions')
@@ -146,13 +146,38 @@ RSpec.describe ColoradoLottery do
       expected_eligible_cash_5 = [winston, grace]
       expected_eligible_mega = [alexander, frederick, winston, grace]
 
-
-
       expect(lottery.registered_contestants).to eq(expected_registered)
       expect(lottery.eligible_contestants(pick_4)).to eq(expected_eligible_pick_4)
       expect(lottery.eligible_contestants(cash_5)).to eq(expected_eligible_cash_5)
       expect(lottery.eligible_contestants(mega_millions)).to eq(expected_eligible_mega)
   end
 
+  it 'charges elibible contestants for game if registered' do
+    alexander.add_game_interest('Pick 4')
+    alexander.add_game_interest('Mega Millions')
+    frederick.add_game_interest('Mega Millions')
+    winston.add_game_interest('Cash 5')
+    winston.add_game_interest('Mega Millions')
+    grace.add_game_interest('Mega Millions')
+    grace.add_game_interest('Cash 5')
+    grace.add_game_interest('Pick 4')
+
+    lottery.register_contestant(alexander, pick_4)
+    lottery.register_contestant(alexander, mega_millions)
+    lottery.register_contestant(frederick, mega_millions)
+    lottery.register_contestant(winston, cash_5)
+    lottery.register_contestant(winston, mega_millions)
+    lottery.register_contestant(grace, mega_millions)
+    lottery.register_contestant(grace, cash_5)
+    lottery.register_contestant(grace, pick_4)
+
+    lottery.charge_contestants(cash_5)
+
+    expect(winston.spending_money).to eq(4)
+    expect(grace.spending_money).to eq(19)
+  end
+
+  it 'contestants are considered "current_contestants" after being charged' do
+  end
 
 end

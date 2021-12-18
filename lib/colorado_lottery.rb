@@ -29,4 +29,10 @@ class ColoradoLottery
       contestant.spending_money >= game.cost
     end
   end
+
+  def charge_contestants(game)
+    eligible_contestants(game).each do |contestant|
+      contestant.spending_money -= game.cost
+    end
+  end
 end
