@@ -16,4 +16,12 @@ RSpec.describe Game do
     expect(mega_millions.cost).to eq(5)
     expect(mega_millions.national_drawing?).to be true
   end
+
+  it 'has an optional argument for national_drawing. Default is false' do
+    mega_millions = Game.new('Mega Millions', 5, true)
+    pick_4 = Game.new('Pick 4', 2)
+
+    expect(mega_millions.national_drawing?).to be true
+    expect(pick_4.national_drawing?).to be false 
+  end
 end
