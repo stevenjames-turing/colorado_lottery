@@ -55,4 +55,19 @@ RSpec.describe ColoradoLottery do
     expect(lottery.interested_and_18?(benjamin, mega_millions)).to be false
     expect(lottery.interested_and_18?(alexander, cash_5)).to be false
   end
+
+  it 'tracks whether players are eligible to register, while also being interested in game' do
+    alexander.add_game_interest('Pick 4')
+    alexander.add_game_interest('Mega Millions')
+    frederick.add_game_interest('Mega Millions')
+    winston.add_game_interest('Cash 5')
+    winston.add_game_interest('Mega Millions')
+    benjamin.add_game_interest('Mega Millions')
+
+    expect(lottery.can_register?(alexander, pick_4)).to be true
+    expect(lottery.can_register?(alexander, cash_5)).to be false
+    expect(lottery.can_register?(frederick, mega_millions)).to be true
+    expect(lottery.can_register?(benjamin, mega_millions)).to be false
+    expect(lottery.can_register?(frederick, cash_5)).to be false
+  end
 end
