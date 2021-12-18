@@ -1,4 +1,4 @@
-class Contestant
+class Game
 
   def initialize
   end

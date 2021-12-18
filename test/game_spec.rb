@@ -1,7 +1,8 @@
 require './lib/contestant'
+require './lib/game'
 
 
-RSpec.describe Contestant do
+RSpec.describe Game do
   it 'exists' do
 
   end
