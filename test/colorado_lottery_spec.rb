@@ -32,6 +32,12 @@ RSpec.describe ColoradoLottery do
     age: 18,
     state_of_residence: 'CO',
     spending_money: 5})}
+  let (:grace) {Contestant.new({
+    first_name: 'Grace',
+    last_name: 'Hopper',
+    age: 20,
+    state_of_residence: 'CO',
+    spending_money: 20})}
 
   it 'exists' do
     expect(lottery).to be_instance_of ColoradoLottery
@@ -70,4 +76,48 @@ RSpec.describe ColoradoLottery do
     expect(lottery.can_register?(benjamin, mega_millions)).to be false
     expect(lottery.can_register?(frederick, cash_5)).to be false
   end
+
+  it 'can register eligible contestants' do
+    alexander.add_game_interest('Pick 4')
+
+    lottery.register_contestant(alexander, pick_4)
+
+    expected_registered = {"Pick 4"=> [alexander]}
+    expect(lottery.registered_contestants).to eq(expected_registered)
+  end
+
+  it 'can register contestants to multiple games' do
+    alexander.add_game_interest('Pick 4')
+    alexander.add_game_interest('Mega Millions')
+
+    lottery.register_contestant(alexander, pick_4)
+    lottery.register_contestant(alexander, mega_millions)
+
+    expected_registered = {"Pick 4"=> [alexander], "Mega Millions"=> [alexander]}
+    expect(lottery.registered_contestants).to eq(expected_registered)
+  end
+
+  it 'can register multiple contestants to multiple games' do
+    alexander.add_game_interest('Pick 4')
+    alexander.add_game_interest('Mega Millions')
+    frederick.add_game_interest('Mega Millions')
+    winston.add_game_interest('Cash 5')
+    winston.add_game_interest('Mega Millions')
+    benjamin.add_game_interest('Mega Millions')
+
+    lottery.register_contestant(alexander, pick_4)
+    lottery.register_contestant(alexander, mega_millions)
+    lottery.register_contestant(frederick, mega_millions)
+    lottery.register_contestant(winston, cash_5)
+    lottery.register_contestant(winston, mega_millions)
+
+    expected_registered = {
+      "Pick 4"=> [alexander],
+      "Mega Millions"=> [alexander, frederick, winston],
+      "Cash 5"=> [winston]}
+
+    expect(lottery.registered_contestants).to eq(expected_registered)
+  end
+
+
 end

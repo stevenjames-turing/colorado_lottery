@@ -16,5 +16,11 @@ class ColoradoLottery
     (game.national_drawing? || !contestant.out_of_state?)
   end
 
-
+  def register_contestant(contestant, game)
+    if can_register?(contestant, game) && registered_contestants.has_key?(game.name)
+      registered_contestants[game.name] << contestant
+    elsif can_register?(contestant, game) == true && !registered_contestants.has_key?(game.name)
+      registered_contestants[game.name] = [] << contestant
+    end
+  end
 end
