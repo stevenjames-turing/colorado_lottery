@@ -46,4 +46,11 @@ class ColoradoLottery
     p Date.today.to_s
   end
 
+  def announce_winner(game)
+    @winners.each do |winner|
+      if winner.keys.include?(game)
+        return "#{winner.values[0]} won the #{game} on #{Date.today.to_s[5..-1]}"
+      end
+    end
+  end
 end

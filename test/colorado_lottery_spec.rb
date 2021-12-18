@@ -246,7 +246,7 @@ RSpec.describe ColoradoLottery do
     expect(alexander.spending_money).to eq(3)
   end
 
-  it 'next test' do
+  it 'can draw winners randomly from current contestants' do
     alexander.add_game_interest('Pick 4')
     alexander.add_game_interest('Mega Millions')
     frederick.add_game_interest('Mega Millions')
@@ -255,7 +255,6 @@ RSpec.describe ColoradoLottery do
     grace.add_game_interest('Mega Millions')
     grace.add_game_interest('Cash 5')
     grace.add_game_interest('Pick 4')
-
     lottery.register_contestant(alexander, pick_4)
     lottery.register_contestant(alexander, mega_millions)
     lottery.register_contestant(frederick, mega_millions)
@@ -264,7 +263,6 @@ RSpec.describe ColoradoLottery do
     lottery.register_contestant(grace, mega_millions)
     lottery.register_contestant(grace, cash_5)
     lottery.register_contestant(grace, pick_4)
-
     lottery.charge_contestants(cash_5)
     lottery.charge_contestants(mega_millions)
     lottery.charge_contestants(pick_4)
@@ -275,5 +273,45 @@ RSpec.describe ColoradoLottery do
     expect(lottery.winners.first.class).to be Hash
     expect(lottery.winners.last.class).to be Hash
     expect(lottery.winners.length).to eq(3)
+  end
+
+  it 'can announce winners of lottery drawing' do
+    alexander.add_game_interest('Pick 4')
+    alexander.add_game_interest('Mega Millions')
+    frederick.add_game_interest('Mega Millions')
+    winston.add_game_interest('Cash 5')
+    winston.add_game_interest('Mega Millions')
+    grace.add_game_interest('Mega Millions')
+    grace.add_game_interest('Cash 5')
+    grace.add_game_interest('Pick 4')
+    lottery.register_contestant(alexander, pick_4)
+    lottery.register_contestant(alexander, mega_millions)
+    lottery.register_contestant(frederick, mega_millions)
+    lottery.register_contestant(winston, cash_5)
+    lottery.register_contestant(winston, mega_millions)
+    lottery.register_contestant(grace, mega_millions)
+    lottery.register_contestant(grace, cash_5)
+    lottery.register_contestant(grace, pick_4)
+    lottery.charge_contestants(cash_5)
+    lottery.charge_contestants(mega_millions)
+    lottery.charge_contestants(pick_4)
+
+    lottery.draw_winners
+    pick_4_winner = []
+    mega_millions_winner = []
+    cash_5_winner = []
+    lottery.winners.each do |winner|
+      if winner.keys.include?("Pick 4")
+        pick_4_winner << winner.values[0].chomp
+      elsif winner.keys.include?("Mega Millions")
+        mega_millions_winner << winner.values[0]
+      elsif winner.keys.include?("Cash 5")
+        cash_5_winner << winner.values[0]
+      end
+    end
+
+    expect(lottery.announce_winner("Pick 4")).to eq("#{pick_4_winner[0]} won the Pick 4 on #{Date.today.to_s[5..-1]}")
+    expect(lottery.announce_winner("Cash 5")).to eq("#{cash_5_winner[0]} won the Cash 5 on #{Date.today.to_s[5..-1]}")
+    expect(lottery.announce_winner("Mega Millions")).to eq("#{mega_millions_winner[0]} won the Mega Millions on #{Date.today.to_s[5..-1]}")
   end
 end
