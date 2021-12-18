@@ -33,6 +33,7 @@ class ColoradoLottery
   def charge_contestants(game)
     eligible_contestants(game).each do |contestant|
       contestant.spending_money -= game.cost
+      @current_contestants.has_key?(game) ? @current_contestants[game] << contestant.full_name : @current_contestants[game] = [] << contestant.full_name
     end
   end
 end

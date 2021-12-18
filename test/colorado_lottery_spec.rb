@@ -10,7 +10,7 @@ RSpec.describe ColoradoLottery do
   let (:cash_5) {Game.new('Cash 5', 1)}
   let (:alexander) {Contestant.new({
     first_name: 'Alexander',
-    last_name: 'Aigiades',
+    last_name: 'Aigades',
     age: 28,
     state_of_residence: 'CO',
     spending_money: 10})}
@@ -153,6 +153,67 @@ RSpec.describe ColoradoLottery do
   end
 
   it 'charges elibible contestants for game if registered' do
+    winston.add_game_interest('Cash 5')
+    grace.add_game_interest('Cash 5')
+    lottery.register_contestant(winston, cash_5)
+    lottery.register_contestant(grace, cash_5)
+
+    lottery.charge_contestants(cash_5)
+
+    expect(winston.spending_money).to eq(4)
+    expect(grace.spending_money).to eq(19)
+  end
+
+  it 'contestants are considered "current_contestants" after being charged' do
+    winston.add_game_interest('Cash 5')
+    grace.add_game_interest('Cash 5')
+    lottery.register_contestant(winston, cash_5)
+    lottery.register_contestant(grace, cash_5)
+    lottery.charge_contestants(cash_5)
+
+    expected = {cash_5 => ["Winston Churchill", "Grace Hopper"]}
+
+    expect(lottery.current_contestants).to eq(expected)
+  end
+
+  it 'contestants are no longer eligible when spending money < game cost' do
+    alexander.add_game_interest('Mega Millions')
+    frederick.add_game_interest('Mega Millions')
+    winston.add_game_interest('Cash 5')
+    winston.add_game_interest('Mega Millions')
+    grace.add_game_interest('Mega Millions')
+    grace.add_game_interest('Cash 5')
+
+    lottery.register_contestant(alexander, mega_millions)
+    lottery.register_contestant(frederick, mega_millions)
+    lottery.register_contestant(winston, cash_5)
+    lottery.register_contestant(winston, mega_millions)
+    lottery.register_contestant(grace, mega_millions)
+    lottery.register_contestant(grace, cash_5)
+
+      expected_eligible_mega1 = [alexander, frederick, winston, grace]
+    expect(lottery.eligible_contestants(mega_millions)).to eq(expected_eligible_mega1)
+
+    lottery.charge_contestants(cash_5)
+
+      expected_eligible_mega2 = [alexander, frederick, grace]
+    expect(winston.spending_money).to eq(4)
+    expect(lottery.eligible_contestants(mega_millions)).to eq(expected_eligible_mega2)
+
+    lottery.charge_contestants(mega_millions)
+
+      expected_contestants = {
+        cash_5 => ["Winston Churchill", "Grace Hopper"],
+        mega_millions => ["Alexander Aigades", "Frederick Douglas", "Grace Hopper"]}
+
+    expect(lottery.current_contestants).to eq(expected_contestants)
+    expect(winston.spending_money).to eq(4)
+    expect(grace.spending_money).to eq(14)
+    expect(alexander.spending_money).to eq(5)
+    expect(frederick.spending_money).to eq(15)
+  end
+
+  xit 'next test' do
     alexander.add_game_interest('Pick 4')
     alexander.add_game_interest('Mega Millions')
     frederick.add_game_interest('Mega Millions')
@@ -172,12 +233,13 @@ RSpec.describe ColoradoLottery do
     lottery.register_contestant(grace, pick_4)
 
     lottery.charge_contestants(cash_5)
+    lottery.charge_contestants(mega_millions)
 
-    expect(winston.spending_money).to eq(4)
-    expect(grace.spending_money).to eq(19)
-  end
+    expected_contestants = {
+      cash_5 => ["Winston Churchill", "Grace Hopper"],
+      mega_millions => ["Alexander Aigades", "Frederick Douglas", "Grace Hopper"]}
 
-  it 'contestants are considered "current_contestants" after being charged' do
+    expect(lottery.current_contestants).to eq(expected_contestants)
   end
 
 end
