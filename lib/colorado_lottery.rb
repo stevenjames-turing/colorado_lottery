@@ -23,4 +23,10 @@ class ColoradoLottery
       registered_contestants[game.name] = [] << contestant
     end
   end
+
+  def eligible_contestants(game)
+    eligible_contestants = registered_contestants[game.name].select do |contestant|
+      contestant.spending_money >= game.cost
+    end
+  end
 end
